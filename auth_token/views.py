@@ -6,8 +6,10 @@ from rest_framework.response import Response
 from auth_token import serializers
 from auth_token.models import User
 from auth_token.serializers import UserListSerializer
-from shared.exceptions import ConflictApiEx
+
 from drf_yasg.utils import swagger_auto_schema
+
+from shared.exceptions import ConflictEmailEx, ConflictPhoneEx
 
 
 @swagger_auto_schema(
@@ -37,11 +39,11 @@ def register(request):
 
     user_exists = User.objects.filter(Q(username=email) | Q(email=email)).first()
     if user_exists:
-        raise ConflictApiEx("This email already exists.")
+        raise ConflictEmailEx("This email already exists.")
 
     phone_exists = User.objects.filter(Q(mobile_phone_number=mobile_phone_number)).first()
     if phone_exists:
-        raise ConflictApiEx("This mobile phone number already exists.")
+        raise ConflictPhoneEx("This mobile phone number already exists.")
 
     user = User.objects.create_user(
         username=email, email=email,

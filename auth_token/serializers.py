@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from mitrais.auth_token import models
+from auth_token import models
 
 
 class UserListSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class UserListSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(allow_blank=True)
-    email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=models.User.objects.all())])
+    email = serializers.CharField(required=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     mobile_phone_number = serializers.CharField(required=True)
@@ -24,12 +24,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=models.User.objects.all())])
+    email = serializers.EmailField(required=True)
     first_name = serializers.CharField(max_length=30, required=True)
     mobile_phone_number = serializers.CharField(max_length=20, required=True)
     last_name = serializers.CharField(max_length=150, required=True)
-    birth_date = serializers.DateTimeField(required=False)
-    gender = serializers.ChoiceField(models.GENDER_CHOICES, required=False)
+    birth_date = serializers.DateTimeField(required=False, allow_null=True)
+    gender = serializers.ChoiceField(models.GENDER_CHOICES, allow_blank=True)
+    password = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = models.User
